@@ -40,10 +40,19 @@ Would be invoked like so:
 
 Returns a filtered list of installed packages.
 
-    query( pattern:string )
+    query( pattern:string ): array
 
 Where 'pattern' is any valid Perl regular expression. Only values that match
-this parameter should be returned.
+this parameter should be returned. Every index of the returned array should 
+be a hash with the following keys-values:
+
+Name of the package.
+
+    name => string
+
+Version of the package.
+
+    version => string
 
 =cut
 
