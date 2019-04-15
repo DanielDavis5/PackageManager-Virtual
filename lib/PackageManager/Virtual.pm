@@ -30,17 +30,20 @@ parameters are not included in the definitions below.
 
 All functions use named parameters. For example, the function defintion:
     
-    func( arg1:string arg2:number ): hash
+    func( arg1:string arg2:number ): Hash
 
 Would be invoked like so:
     
     my %result = $obj->func( arg1 => "hello", arg2 => 5);
 
+All input parameters are prevalidated; there is no need to revalidate
+inputs in implementation.
+
 =head3 QUERY
 
 Returns a filtered list of installed packages.
 
-    query( pattern:string ): array
+    query( pattern:string ): Array
 
 Where 'pattern' is any valid Perl regular expression. Only values that match
 this parameter should be returned. Every index of the returned array should 
@@ -55,11 +58,39 @@ Version of the package.
     version => string
 
 =cut
-
 package PackageManager::Virtual;
+
 use 5.006;
+use Carp;
+use Params::Check qw(check);
+
+my $VERBOSE = 0;
+
 use Moose::Role;
 
 requires 'query';
+
+before 'query' => sub {
+    my $self = shift;
+    my %hash = @_;
+
+    my ( $verbose, $pattern );
+    my $tmpl = {
+        verbose => { default  => $VERBOSE, store => \$verbose },
+        pattern => { required => 1,        store => \$pattern }
+    };
+
+    check( $tmpl, \%hash, $VERBOSE )
+      or croak( "Could not validate input: %1", Params::Check->last_error );
+
+    unless ( $verbose == 0 || $verbose == 1 ) {
+        croak "Invalid value for optional parameter 'verbose'";
+    }
+
+    eval { qr/$pattern/ };
+    if ($@) {
+        croak "Invalid value for parameter 'pattern'. [$@]\n";
+    }
+};
 
 1;

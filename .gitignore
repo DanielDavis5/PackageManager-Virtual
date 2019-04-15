@@ -1,4 +1,5 @@
 PackageManager-Virtual*
 PackageManager-Virtual*.tar.gz
+.build
 
 .vscode/perl-lang/
