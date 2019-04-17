@@ -6,7 +6,10 @@ use warnings;
 package Mock;
 use Moose;
 
-sub query { }
+my @packages = ("app1", "app2", "app3");
+
+sub query   { return @packages; }
+sub install { }
 
 with 'PackageManager::Virtual';
 
@@ -19,6 +22,7 @@ my $obj = new_ok('Mock');
 
 subtest 'Test valid queries' => sub {
     my @list = split /\n/, <<'END';
+    
 foo
 John Smith
 (\d+):(\d+):(\d+)
@@ -45,6 +49,7 @@ END
 subtest 'Test invalid queries' => sub {
     my @list = split /\n/, <<'END';
 [
+
 (?(??{bad})c|d)
 (?(?p{bad})c|d)
 (?(?>bad)c|d)

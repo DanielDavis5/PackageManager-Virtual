@@ -45,9 +45,9 @@ Returns a filtered list of installed packages.
 
     query( pattern:string ): Array
 
-Where 'pattern' is any valid Perl regular expression. Only values that match
-this parameter should be returned. Every index of the returned array should 
-be a hash with the following keys-values:
+Where 'pattern' is any valid Perl regular expression. Only packages whose names
+match this parameter will be returned. Every index of the returned array is a
+hash with the following keys-values:
 
 Name of the package.
 
@@ -57,7 +57,18 @@ Version of the package.
 
     version => string
 
+=head3 INSTALL
+
+Installs a specified package.
+
+    install( package_name:string version:string ): Integer
+
+Where package_name is the name of the package to be installed. Version specifies the
+version of the package; it is optional and defaults to the latest version. Zero
+is returned when successful. Otherwise, the value indicates an error code.
+
 =cut
+
 package PackageManager::Virtual;
 
 use 5.006;
@@ -70,26 +81,59 @@ use Moose::Role;
 
 requires 'query';
 
-before 'query' => sub {
+around 'query' => sub {
+    my $orig = shift;
     my $self = shift;
-    my %hash = @_;
+    my %args = @_;
 
     my ( $verbose, $pattern );
     my $tmpl = {
-        verbose => { default  => $VERBOSE, store => \$verbose },
-        pattern => { required => 1,        store => \$pattern }
+        verbose => {
+            default => $VERBOSE,
+            allow   => [ 0, 1 ]
+        },
+        pattern => {
+            default => '.*',
+            defined => 1,
+            store   => \$pattern,
+            allow   => sub {
+                my $arg = $_[0];
+                eval { qr/$arg/ };
+                return $@ ? 0 : length($arg);
+            }
+        }
+    };
+
+    check( $tmpl, \%args, $VERBOSE )
+      or croak( "Could not validate input: %1", Params::Check->last_error );
+
+    my @packages = $self->$orig();
+    return grep /$pattern/, @packages;
+};
+
+requires 'install';
+
+before 'install' => sub {
+    my $self = shift;
+    my %hash = @_;
+
+    my ( $verbose, $package_name, $version );
+    my $tmpl = {
+        verbose      => { default  => $VERBOSE, store => \$verbose },
+        package_name => { required => 1,        store => \$package_name },
+        version      => { required => 0,        store => \$version }
     };
 
     check( $tmpl, \%hash, $VERBOSE )
       or croak( "Could not validate input: %1", Params::Check->last_error );
 
-    unless ( $verbose == 0 || $verbose == 1 ) {
-        croak "Invalid value for optional parameter 'verbose'";
+    if ( length($package_name) == 0 ) {
+        croak
+          "Invalid parameter value; 'package_name' may not be empty string.";
     }
 
-    eval { qr/$pattern/ };
-    if ($@) {
-        croak "Invalid value for parameter 'pattern'. [$@]\n";
+    if ( defined $version && length($version) == 0 ) {
+        croak "Invalid parameter value; 'version' may not be empty string.";
     }
 };
 
