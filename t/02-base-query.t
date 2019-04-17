@@ -15,7 +15,7 @@ with 'PackageManager::Base';
 
 package TestMain;
 use Test::More;
-plan tests => 3;
+plan tests => 2;
 
 use MockBase;
 
