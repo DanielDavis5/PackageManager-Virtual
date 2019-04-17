@@ -6,6 +6,11 @@ use Test::More;
 
 plan tests => 1;
 
-BEGIN { use_ok('PackageManager::Virtual') }
+BEGIN {
+    use_ok('PackageManager::Virtual');
+    use_ok('PackageManager::Base');
+}
 
-diag("Testing PackageManager::Virtual $PackageManager::Virtual::VERSION, Perl $], $^X");
+diag(
+"Testing PackageManager::Virtual $PackageManager::Virtual::VERSION, Perl $], $^X"
+);
