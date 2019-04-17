@@ -3,7 +3,7 @@ use 5.006;
 use strict;
 use warnings;
 
-package Mock;
+package MockBase;
 use Moose;
 
 my @packages = ("app1", "app2", "app3");
@@ -11,14 +11,13 @@ my @packages = ("app1", "app2", "app3");
 sub query   { return @packages; }
 sub install { }
 
-with 'PackageManager::Virtual';
+with 'PackageManager::Base';
 
 package TestMain;
 use Test::More;
 plan tests => 3;
 
-use Mock;
-my $obj = new_ok('Mock');
+use MockBase;
 
 subtest 'Test valid queries' => sub {
     my @list = split /\n/, <<'END';
@@ -34,7 +33,7 @@ a-z
 END
     plan tests => scalar @list;
 
-    my $obj = Mock->new;
+    my $obj = MockBase->new;
     foreach my $p (@list) {
         eval { $obj->query( pattern => $p ) };
         if ($@) {
@@ -64,7 +63,7 @@ subtest 'Test invalid queries' => sub {
 END
     plan tests => scalar @list;
 
-    my $obj = Mock->new;
+    my $obj = MockBase->new;
     foreach my $p (@list) {
         eval { $obj->query( pattern => $p ) };
         if ($@) {
