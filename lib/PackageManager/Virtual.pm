@@ -9,8 +9,23 @@ use warnings;
     use Moose;
 
     sub query {
-        # return installed packages
+        return (
+            {
+                name    => "app1",
+                version => "1.0",
+            },
+            {
+                name    => "devTool",
+                version => "3.0.1-3",
+            },
+            {
+                name    => "cool-thing",
+                version => "alpha",
+            },
+        );
     }
+    
+    sub install { }
 
     with 'PackageManager::Virtual';
     1;
@@ -23,8 +38,8 @@ required to manage package installations.
 =head2 SUBROUTINES
 
 All functions should be invoked using the infix dereference operator "->"; 
-the first parameter will always be the object instance. The parameter 'verbose'
-is a value 0 or 1, and is always optional (default: 0). Commands run with
+the first parameter will always be the object instance. A parameter 'verbose'
+is always optional and has a value 0 or 1 (default=0). Commands run with
 verbose=1 are expected to output additional information to STDOUT. These
 parameters are not included in the definitions below.
 
@@ -35,9 +50,6 @@ All functions use named parameters. For example, the function defintion:
 Would be invoked like so:
     
     my %result = $obj->func( arg1 => "hello", arg2 => 5);
-
-All input parameters are prevalidated; there is no need to revalidate
-inputs in implementation.
 
 =head3 QUERY
 
@@ -63,9 +75,10 @@ Installs a specified package.
 
     install( package_name:string version:string ): Integer
 
-Where package_name is the name of the package to be installed. Version specifies the
-version of the package; it is optional and defaults to the latest version. Zero
-is returned when successful. Otherwise, the value indicates an error code.
+Where package_name is the name of the package to be installed. The parameter
+'version' specifies the version of the package to install; it is optional. When
+omitted the latest version will be installed. The subroutine will return the
+number zero on success. Otherwise, the return value indicates an error code.
 
 =cut
 

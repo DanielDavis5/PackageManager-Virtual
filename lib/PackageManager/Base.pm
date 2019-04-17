@@ -3,6 +3,56 @@ use warnings;
 
 # ABSTRACT: A base class for the PackageManager::Virtual role.
 
+=head1 SYNOPSIS
+
+    package My::PackageManager;
+    use Moose;
+
+    sub query {
+        return (
+            {
+                name    => "app1",
+                version => "1.0",
+            },
+            {
+                name    => "devTool",
+                version => "3.0.1-3",
+            },
+            {
+                name    => "cool-thing",
+                version => "alpha",
+            },
+        );
+    }
+    
+    sub install { }
+
+    with 'PackageManager::Base';
+    1;
+
+=head1 DESCRIPTION
+
+Handles boiler plate parameter validation; as well as, some output
+manipulation. 
+
+=head2 SUBROUTINES
+
+All subroutine parameters are validated before invocation.
+
+=head3 QUERY
+
+The pattern filter is automatically applied the results. Implementing
+this subroutine now requires all installed packages to be returned.
+
+Returns all installed packages.
+
+    query(): Array
+
+Every index of the returned array is a hash with the same structure as
+the previous defintion.
+
+=cut
+
 package PackageManager::Base;
 use 5.006;
 use Carp;
