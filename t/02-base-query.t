@@ -6,9 +6,23 @@ use warnings;
 package MockBase;
 use Moose;
 
-my @packages = ("app1", "app2", "app3");
+sub query {
+    return (
+        {
+            name    => "app1",
+            version => "1.0",
+        },
+        {
+            name    => "devTool",
+            version => "3.0.1-3",
+        },
+        {
+            name    => "cool-thing",
+            version => "alpha",
+        },
+    );
+}
 
-sub query   { return @packages; }
 sub install { }
 
 with 'PackageManager::Base';
