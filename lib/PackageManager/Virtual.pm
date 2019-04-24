@@ -77,6 +77,26 @@ Would return the value:
 
 An interface that exposes functionalities for software package management.
 
+=head2 DATA
+
+=head3 PACKAGE INFO
+
+package_info := A hash value that defines a package. It has the following
+structure:
+
+    (
+        name    => string,
+        version => string
+    )
+
+Where 'name' is the name of the package and 'version' is a specific version
+of the package.
+
+=head3 ERROR CODE
+
+error_code := An integer number value. The value zero implies no error. Otherwise, the
+return value indicates an error code.
+
 =head2 SUBROUTINES
 
 All functions use named parameters. For example, the function definition:
@@ -101,6 +121,7 @@ Where 'pattern' is any valid Perl regular expression. The return value is an
 Array of package_info whose names match 'pattern'.
 
 =cut
+
 requires 'query';
 
 =head3 INSTALL
@@ -113,6 +134,7 @@ Where 'package' defines the package to be installed. The 'version' key of the
 package_info may be omitted. In this case, the latest version will be installed.
 
 =cut
+
 requires 'install';
 
 =head3 REMOVE
@@ -124,27 +146,7 @@ Uninstalls a specified package.
 Where 'name' is the name of the package to be uninstalled.
 
 =cut
+
 requires 'remove';
 
-=head2 DATA
-
-=head3 PACKAGE INFO
-
-package_info := A hash value that defines a package. It has the following
-structure:
-
-    (
-        name    => string,
-        version => string
-    )
-
-Where 'name' is the name of the package and 'version' is a specific version
-of the package.
-
-=head3 ERROR CODE
-
-error_code := An integer number value. The value zero implies no error. Otherwise, the
-return value indicates an error code.
-
-=cut
 1;

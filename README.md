@@ -69,6 +69,26 @@ Would return the value:
 
 An interface that exposes functionalities for software package management.
 
+## DATA
+
+### PACKAGE INFO
+
+package\_info := A hash value that defines a package. It has the following
+structure:
+
+    (
+        name    => string,
+        version => string
+    )
+
+Where 'name' is the name of the package and 'version' is a specific version
+of the package.
+
+### ERROR CODE
+
+error\_code := An integer number value. The value zero implies no error. Otherwise, the
+return value indicates an error code.
+
 ## SUBROUTINES
 
 All functions use named parameters. For example, the function definition:
@@ -108,23 +128,3 @@ Uninstalls a specified package.
     remove( name:string ): error_code
 
 Where 'name' is the name of the package to be uninstalled.
-
-## DATA
-
-### PACKAGE INFO
-
-package\_info := A hash value that defines a package. It has the following
-structure:
-
-    (
-        name    => string,
-        version => string
-    )
-
-Where 'name' is the name of the package and 'version' is a specific version
-of the package.
-
-### ERROR CODE
-
-error\_code := An integer number value. The value zero implies no error. Otherwise, the
-return value indicates an error code.
