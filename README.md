@@ -54,7 +54,7 @@ A valid method invocation:
 
 Would return the value:
 
-    [
+    (
         {
             name    => "app1",
             version => "1.0",
@@ -63,7 +63,7 @@ Would return the value:
             name    => "app2",
             version => "2.1",
         },
-    ]
+    )
 
 # DESCRIPTION
 
