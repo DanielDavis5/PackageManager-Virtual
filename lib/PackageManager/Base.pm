@@ -5,30 +5,24 @@ use warnings;
 
 =head1 SYNOPSIS
 
-    package My::PackageManager;
+    package Example::Base;
     use Moose;
 
+    has 'example_apps' => ( is => 'rw' );
+
     sub query {
-        return (
-            {
-                name    => "app1",
-                version => "1.0",
-            },
-            {
-                name    => "devTool",
-                version => "3.0.1-3",
-            },
-            {
-                name    => "cool-thing",
-                version => "alpha",
-            },
-        );
+        my $self    = shift;
+        my $verbose = shift;
+
+        if ( defined $verbose && $verbose == 1 ) {
+            print 'hi';
+        }
+        return @{ $self->example_apps };
     }
-    
+
     sub install { }
 
     with 'PackageManager::Base';
-    1;
 
 =head1 DESCRIPTION
 
@@ -73,7 +67,6 @@ around 'query' => sub {
             allow   => [ 0, 1 ]
         },
         pattern => {
-            default => '.*',
             defined => 1,
             store   => \$pattern,
             allow   => sub {
@@ -84,35 +77,50 @@ around 'query' => sub {
         }
     };
 
-    check( $tmpl, \%args, $VERBOSE )
+    check( $tmpl, \%args, $verbose )
       or croak( "Could not validate input: %1", Params::Check->last_error );
 
-    my @packages = $self->$orig();
-    return grep /$pattern/, @packages;
+    my @packages = $self->$orig($verbose);
+    if ( defined $pattern ) {
+        my $re = qr/$pattern/;
+        return grep { $_->{name} =~ $re } @packages;
+    }
+    else {
+        return @packages;
+    }
 };
 
-before 'install' => sub {
+around 'install' => sub {
+    my $orig = shift;
     my $self = shift;
-    my %hash = @_;
+    my %args = @_;
 
     my ( $verbose, $package_name, $version );
     my $tmpl = {
-        verbose      => { default  => $VERBOSE, store => \$verbose },
-        package_name => { required => 1,        store => \$package_name },
-        version      => { required => 0,        store => \$version }
+        verbose => {
+            default => $VERBOSE,
+            store   => \$verbose,
+            allow   => [ 0, 1 ]
+        },
+        package_name => {
+            required => 1,
+            store    => \$package_name,
+            allow    => sub {
+                return length( $_[0] ) > 0;
+            }
+        },
+        version => {
+            store => \$version,
+            allow => sub {
+                return length( $_[0] ) > 0;
+            }
+        }
     };
 
-    check( $tmpl, \%hash, $VERBOSE )
+    check( $tmpl, \%args, $verbose )
       or croak( "Could not validate input: %1", Params::Check->last_error );
 
-    if ( length($package_name) == 0 ) {
-        croak
-          "Invalid parameter value; 'package_name' may not be empty string.";
-    }
-
-    if ( defined $version && length($version) == 0 ) {
-        croak "Invalid parameter value; 'version' may not be empty string.";
-    }
+    return $self->$orig( $verbose, $package_name, $version );
 };
 
 with 'PackageManager::Virtual';
