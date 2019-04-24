@@ -96,13 +96,13 @@ Returns a filtered list of installed packages.
     query( pattern:string ): Array
 
 Where 'pattern' is any valid Perl regular expression. The return value is an
-Array of package_info whose names match 'pattern'.
+Array of package-info whose names match 'pattern'.
 
 =head3 INSTALL
 
 Installs a specified package.
 
-    install( package:package_info ): error_code
+    install( package:package-info ): error-code
 
 Where package defines the package to be installed. The 'version' key of the
 package may be omitted. In this case, the latest version will be installed.
@@ -111,15 +111,15 @@ package may be omitted. In this case, the latest version will be installed.
 
 Uninstalls a specified package.
 
-    remove( package_name:string ): error_code
+    remove( package_name:string ): error-code
 
 Where package_name is the name of the package to be uninstalled.
 
 =head2 DATA
 
-=head3 PACKAGE_INFO
+=head3 PACKAGE INFO
 
-package_info := A hash value that defines a package. It has the following
+package-info := A hash value that defines a package. It has the following
 structure:
 
     (
@@ -130,9 +130,9 @@ structure:
 Where 'name' is the name of the package and 'version' is a specific version
 of the package.
 
-=head3 ERROR_CODE
+=head3 ERROR CODE
 
-Is an integer number value. The value zero implies no error. Otherwise, the
+error-code := An integer number value. The value zero implies no error. Otherwise, the
 return value indicates an error code.
 
 =cut
