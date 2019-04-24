@@ -43,7 +43,7 @@ Returns all installed packages.
     query(): Array
 
 Every index of the returned array is a hash with the same structure as
-the previous defintion.
+the previous definition.
 
 =cut
 

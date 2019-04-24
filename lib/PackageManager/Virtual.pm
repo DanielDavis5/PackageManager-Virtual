@@ -72,12 +72,11 @@ Would return the value:
 
 =head1 DESCRIPTION
 
-An interface that provides a minimumal functionality required to manage 
-software package installations.
+An interface that exposes functionalities for software package management.
 
 =head2 SUBROUTINES
 
-All functions use named parameters. For example, the function defintion:
+All functions use named parameters. For example, the function definition:
     
     func( arg1:string arg2:number ): Hash
 
