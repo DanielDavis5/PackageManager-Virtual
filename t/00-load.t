@@ -10,7 +10,3 @@ BEGIN {
     use_ok('PackageManager::Virtual');
     use_ok('PackageManager::Base');
 }
-
-diag(
-"Testing PackageManager::Virtual $PackageManager::Virtual::VERSION, Perl $], $^X"
-);
