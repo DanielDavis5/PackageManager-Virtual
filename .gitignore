@@ -1,5 +1,5 @@
 PackageManager-Virtual*
 PackageManager-Virtual*.tar.gz
 .build
-
+*perltidy.ERR
 .vscode/perl-lang/
