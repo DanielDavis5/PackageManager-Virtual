@@ -25,6 +25,7 @@ sub query {
 }
 
 sub install { }
+sub remove  { }
 
 with 'PackageManager::Virtual';
 
@@ -44,6 +45,7 @@ sub query {
 }
 
 sub install { }
+sub remove  { }
 
 with 'PackageManager::Base';
 

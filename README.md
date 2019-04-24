@@ -25,7 +25,7 @@
 
     with 'PackageManager::Virtual';
 
-Considering the package defined above, an example instantiation could be:
+Considering the package defined above, an instantiation could be:
 
     my $obj = Example::Virtual->new(
         example_apps => [
@@ -48,7 +48,7 @@ Considering the package defined above, an example instantiation could be:
         ]
     );
 
-As an example, the valid method invocation:
+A valid method invocation:
 
     $obj->query(pattern => 'app');
 
@@ -63,7 +63,7 @@ Would return the value:
             name    => "app2",
             version => "2.1",
         },
-    ];
+    ]
 
 # DESCRIPTION
 
@@ -90,30 +90,30 @@ Returns a filtered list of installed packages.
     query( pattern:string ): Array
 
 Where 'pattern' is any valid Perl regular expression. The return value is an
-Array of package-info whose names match 'pattern'.
+Array of package\_info whose names match 'pattern'.
 
 ### INSTALL
 
 Installs a specified package.
 
-    install( package:package-info ): error-code
+    install( package:package_info ): error_code
 
-Where package defines the package to be installed. The 'version' key of the
-package may be omitted. In this case, the latest version will be installed.
+Where 'package' defines the package to be installed. The 'version' key of the
+package\_info may be omitted. In this case, the latest version will be installed.
 
 ### REMOVE
 
 Uninstalls a specified package.
 
-    remove( package_name:string ): error-code
+    remove( name:string ): error_code
 
-Where package\_name is the name of the package to be uninstalled.
+Where 'name' is the name of the package to be uninstalled.
 
 ## DATA
 
 ### PACKAGE INFO
 
-package-info := A hash value that defines a package. It has the following
+package\_info := A hash value that defines a package. It has the following
 structure:
 
     (
@@ -126,5 +126,5 @@ of the package.
 
 ### ERROR CODE
 
-error-code := An integer number value. The value zero implies no error. Otherwise, the
+error\_code := An integer number value. The value zero implies no error. Otherwise, the
 return value indicates an error code.

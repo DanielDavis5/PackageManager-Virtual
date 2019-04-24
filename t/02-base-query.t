@@ -24,6 +24,7 @@ sub query {
 }
 
 sub install { }
+sub remove  { }
 
 with 'PackageManager::Base';
 
@@ -51,7 +52,7 @@ END
     foreach my $p (@list) {
         eval { $obj->query( pattern => $p ) };
         if ($@) {
-            fail("Test valid pattern '$p'; exception occured. $@");
+            fail("Test valid pattern '$p'; exception occurred. $@");
         }
         else {
             pass("Test valid pattern '$p'.");
@@ -84,7 +85,7 @@ END
             pass("Testing invalid pattern '$p'.");
         }
         else {
-            fail("Testing invalid pattern '$p'; no exeption.");
+            fail("Testing invalid pattern '$p'; no exception.");
         }
     }
 };
