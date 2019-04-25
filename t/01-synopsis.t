@@ -89,69 +89,67 @@ package Test::Main;
 use Test::More;
 
 sub run {
-    my $packageName = shift;
-    my $factory     = shift;
-
-    unless ( $factory->()->isa($packageName) ) {
-        die 'invalid test; bad factory';
-    }
+    my $class = shift;
 
     plan tests => 3;
 
-    my $obj = new_ok($packageName);
-
+    my $obj = new_ok($class);
+    
     subtest 'query; no filter' => sub {
-        test_valid_query( $factory, [], Test::Data::example_apps_all() );
+        validate_query( $class, [], Test::Data::example_apps_all() );
     };
 
     subtest 'query; filter' => sub {
-        test_valid_query(
-            $factory,
+        validate_query(
+            $class,
             [ pattern => 'app' ],
             Test::Data::example_apps_filtered()
         );
     };
+
+    1;
 }
 
-sub test_valid_query {
-    my $factory  = shift;
+sub validate_query {
+    return validate(
+        @_,
+        sub {
+            my $obj = shift;
+            return $obj->query(@_);
+        }
+    );
+}
+
+sub validate {
+    my $class    = shift;
     my $args     = shift;
     my $expected = shift;
-    my $obj      = $factory->();
+    my $func     = shift;
 
     plan tests => 1;
 
-    my @result = eval { $obj->query(@$args) };
+    my $obj    = $class->new( example_apps => Test::Data::example_apps_all() );
+    my @result = eval { $func->( $obj, @$args ) };
     if ($@) {
-        fail( 'error on valid input: ' . $@ );
+        fail($@);
     }
     else {
         is_deeply( \@result, $expected );
     }
+
+    1;
 }
 
 plan tests => 2;
 
 subtest 'Test Virtual synopsis' => sub {
     use Example::Virtual;
-    run(
-        'Example::Virtual',
-        sub {
-            Example::Virtual->new(
-                example_apps => Test::Data::example_apps_all() );
-        }
-    );
+    run('Example::Virtual');
 };
 
 subtest 'Test Base synopsis' => sub {
     use Example::Base;
-    run(
-        'Example::Base',
-        sub {
-            Example::Base->new(
-                example_apps => Test::Data::example_apps_all() );
-        }
-    );
+    run('Example::Base');
 };
 
 1;
