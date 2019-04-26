@@ -26,21 +26,24 @@
 A moose role interface that exposes functionalities for software package
 management.
 
-## DATA
+## DATA MODELS
 
 ### PACKAGE INFO
 
-PACKAGE\_INFO := A hash value that defines a package. It has the following
+A hash value that defines a package. It has the following
 key-value pairs:
 
 - name    => string
-The name of the package.
+
+    The name of the package.
+
 - version => string
-A specific version of the package.
+
+    A specific version of the package.
 
 ### ERROR CODE
 
-ERROR\_CODE := An integer number value. The value zero implies no error.
+An integer number value. The value zero implies no error.
 Otherwise, it indicates an error code.
 
 ## SUBROUTINES
@@ -48,9 +51,10 @@ Otherwise, it indicates an error code.
 All functions use named parameters. Parameters who's types end in **?** are
 optional.
 
-A parameter named 'verbose' is always optional and has a value 0 or 1
-(default=0). Commands run with verbose=1 are expected to output additional
-information to STDOUT. It is implied in the definitions below.
+A parameter named _verbose_ is always optional and has a value 0 or 1
+(default=0). When _verbose_ is **1** commands are expected to output additional
+information to STDOUT. Although omitted, it is implied in the definitions
+below.
 
 ### LIST
 
@@ -58,7 +62,7 @@ Gets all installed packages.
 
     list(): Array
 
-Every index of the return value is a PACKAGE\_INFO reference.
+Every index of the return value is a ["PACKAGE INFO"](#package-info) reference.
 
 ### GET
 
@@ -66,7 +70,7 @@ Gets a specified installed package.
 
     get( name:string ): Hash
 
-The returned value is a PACKAGE\_INFO that defines an installed package who's
+The returned value is a ["PACKAGE INFO"](#package-info) that defines an installed package who's
 name equals _name_. If the package is not installed, the returned value is
 an empty list in list context or the undefined value in scalar context.
 
@@ -76,7 +80,7 @@ Installs a specified package.
 
     install( name:string, version:string? ): Scalar
 
-The returned value is an ERROR\_CODE; it describes the result of an attempt to
+The returned value is an ["ERROR CODE"](#error-code); it describes the result of an attempt to
 install a package who's name equals _name_. When _version_ is included it
 is the version of the package to be installed. Otherwise, the latest package
 version will be installed.
@@ -87,5 +91,5 @@ Removes a specified package.
 
     remove( name:string ): Scalar
 
-The returned value is an ERROR\_CODE; it describes the result of an attempt to
+The returned value is an ["ERROR CODE"](#error-code); it describes the result of an attempt to
 remove a package who's name equals _name_.
