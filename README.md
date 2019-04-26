@@ -48,11 +48,11 @@ Otherwise, it indicates an error code.
 
 ## SUBROUTINES
 
-All functions use named parameters. Parameters who's types end in **?** are
+All functions use named parameters. Parameters who's types end in "**?**" are
 optional.
 
-A parameter named _verbose_ is always optional and has a value **0** or **1**
-_(default=0)_. When _verbose_ is **1** commands are expected to output additional
+A parameter named _verbose_ is always optional and has a value "**0**" or "**1**"
+_(default=0)_. When _verbose_ is "**1**" commands are expected to output additional
 information to STDOUT. Although omitted, it is implied in the definitions
 below.
 
