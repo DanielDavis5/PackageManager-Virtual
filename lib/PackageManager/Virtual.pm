@@ -8,130 +8,102 @@ use Moose::Role;
 
 =head1 SYNOPSIS
 
-    package Example::Virtual;
-    use Moose;
+    # Instantiate an object that composes this package.
+    my $pkgMgr = My::PackageManager->new();
 
-    has 'example_apps' => ( is => 'rw' );
+    # Get all installed packages.
+    my @installed = $pkgMgr->list(); 
 
-    sub query {
-        my $self    = shift;
-        my %args    = @_;
-        my $verbose = $args{verbose};
-        my $pattern = $args{pattern};
+    # Get an installed package's info.
+    my %app_1 = $pkgMgr->get( name => 'app1' );
+    print $app_1{name};    # prints the app name
+    print $app_1{version}; # prints the app version
 
-        if ( defined $verbose && $verbose == 1 ) {
-            print 'hi';
-        }
-        if ( defined $pattern ) {
-            my $re = qr/$pattern/;
-            return grep { $_->{name} =~ $re } @{ $self->example_apps };
-        }
-        return @{ $self->example_apps };
-    }
+    # Unless the package is not installed.
+    my %app_2 = $pkgMgr->get( name => 'not_installed_app' );
+    unless( %app_2 ){ print 'not installed'; } # prints 'not installed'
 
-    sub install { }
+    # Install version '1.0' of an app named 'app3'.
+    $pkgMgr->install( name => 'app3', version => '1.0' );
 
-    with 'PackageManager::Virtual';
-
-Considering the package defined above, an instantiation could be:
-
-    my $obj = Example::Virtual->new(
-        example_apps => [
-            {
-                name    => "devTool",
-                version => "3.0.1-3",
-            },
-            {
-                name    => "app1",
-                version => "1.0",
-            },
-            {
-                name    => "app2",
-                version => "2.1",
-            },
-            {
-                name    => "cool-thing",
-                version => "alpha",
-            },
-        ]
-    );
-
-A valid method invocation:
-
-    $obj->query(pattern => 'app');
-
-Would return the value:
-
-    (
-        {
-            name    => "app1",
-            version => "1.0",
-        },
-        {
-            name    => "app2",
-            version => "2.1",
-        },
-    )
+    # Remove an app named 'app4'.
+    $pkgMgr->remove( name => 'app4' );
 
 =head1 DESCRIPTION
 
-An interface that exposes functionalities for software package management.
+A moose role interface that exposes functionalities for software package
+management.
 
-=head2 DATA
+=head2 DATA MODELS
 
 =head3 PACKAGE INFO
 
-package_info := A hash value that defines a package. It has the following
-structure:
+A hash value that defines a package. It has the following
+key-value pairs:
 
-    (
-        name    => string,
-        version => string
-    )
+=over 4
 
-Where 'name' is the name of the package and 'version' is a specific version
-of the package.
+=item * B<name>    => string
+
+I<The name of the package.>
+
+=item * B<version> => string
+
+I<A specific version of the package.>
+
+=back
 
 =head3 ERROR CODE
 
-error_code := An integer number value. The value zero implies no error. Otherwise, the
-return value indicates an error code.
+An integer number value. The value zero implies no error.
+Otherwise, it indicates an error code.
 
 =head2 SUBROUTINES
 
-All functions use named parameters. For example, the function definition:
-    
-    func( arg1:string arg2:number ): Hash
+All functions use named parameters. Parameters who's types end in "B<?>" are
+optional.
 
-Would be invoked like so:
-    
-    my %result = $obj->func( arg1 => "hello", arg2 => 5);
+A parameter named I<verbose> is always optional and has a value "B<0>" or "B<1>"
+I<(default=0)>. When I<verbose> is "B<1>" commands are expected to output additional
+information to STDOUT. Although omitted, it is implied in the definitions
+below.
 
-A parameter named 'verbose' is always optional and has a value 0 or 1
-(default=0). Commands run with verbose=1 are expected to output additional
-information to STDOUT. It is implied in the definitions below.
+=head3 LIST
 
-=head3 QUERY
+Gets all installed packages.
 
-Returns a filtered list of installed packages.
+    list(): Array
 
-    query( pattern:string ): Array
-
-Where 'pattern' is any valid Perl regular expression. The return value is an
-Array of package_info whose names match 'pattern'.
+Every index of the return value is a L</PACKAGE INFO> reference.
 
 =cut
 
-requires 'query';
+requires 'list';
+
+=head3 GET
+
+Gets a specified installed package.
+
+    get( name:string ): Hash
+
+The returned value is a L</PACKAGE INFO> that defines an installed package who's
+name equals I<name>. If the package is not installed, the returned value is
+an empty list in list context or the undefined value in scalar context.
+
+=cut
+
+requires 'get';
 
 =head3 INSTALL
 
 Installs a specified package.
 
-    install( name:string version:string ): error_code
+    install( name:string, version:string? ): Scalar
 
-Where 'package' defines the package to be installed. The 'version' key of the
-package_info may be omitted. In this case, the latest version will be installed.
+The returned value is an L</ERROR CODE>; it describes the result of an attempt to
+install a package who's name equals I<name>. When I<version> is included it
+is the version of the package to be installed. Otherwise, the latest package
+version will be installed.
 
 =cut
 
@@ -139,11 +111,12 @@ requires 'install';
 
 =head3 REMOVE
 
-Uninstalls a specified package.
+Removes a specified package.
 
-    remove( name:string ): error_code
+    remove( name:string ): Scalar
 
-Where 'name' is the name of the package to be uninstalled.
+The returned value is an L</ERROR CODE>; it describes the result of an attempt to
+remove a package who's name equals I<name>.
 
 =cut
 
