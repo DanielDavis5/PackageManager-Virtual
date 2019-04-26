@@ -95,16 +95,16 @@ around 'install' => sub {
     my $self = shift;
     my %args = @_;
 
-    my ( $verbose, $package_name, $version );
+    my ( $verbose, $name, $version );
     my $tmpl = {
         verbose => {
             default => $VERBOSE,
             store   => \$verbose,
             allow   => [ 0, 1 ]
         },
-        package_name => {
+        name => {
             required => 1,
-            store    => \$package_name,
+            store    => \$name,
             allow    => sub {
                 return length( $_[0] ) > 0;
             }
@@ -120,7 +120,34 @@ around 'install' => sub {
     check( $tmpl, \%args, $verbose )
       or croak( "Could not validate input: %1", Params::Check->last_error );
 
-    return $self->$orig( $verbose, $package_name, $version );
+    return $self->$orig( $verbose, $name, $version );
+};
+
+around 'remove' => sub {
+    my $orig = shift;
+    my $self = shift;
+    my %args = @_;
+
+    my ( $verbose, $name );
+    my $tmpl = {
+        verbose => {
+            default => $VERBOSE,
+            store   => \$verbose,
+            allow   => [ 0, 1 ]
+        },
+        name => {
+            required => 1,
+            store    => \$name,
+            allow    => sub {
+                return length( $_[0] ) > 0;
+            }
+        }
+    };
+
+    check( $tmpl, \%args, $verbose )
+      or croak( "Could not validate input: %1", Params::Check->last_error );
+
+    return $self->$orig( $verbose, $name );
 };
 
 with 'PackageManager::Virtual';
