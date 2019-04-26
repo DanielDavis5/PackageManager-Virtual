@@ -128,7 +128,7 @@ requires 'query';
 
 Installs a specified package.
 
-    install( package:package_info ): error_code
+    install( name:string version:string ): error_code
 
 Where 'package' defines the package to be installed. The 'version' key of the
 package_info may be omitted. In this case, the latest version will be installed.
