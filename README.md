@@ -33,13 +33,13 @@ management.
 A hash value that defines a package. It has the following
 key-value pairs:
 
-- name    => string
+- **name**    => string
 
-    The name of the package.
+    _The name of the package._
 
-- version => string
+- **version** => string
 
-    A specific version of the package.
+    _A specific version of the package._
 
 ### ERROR CODE
 
@@ -51,8 +51,8 @@ Otherwise, it indicates an error code.
 All functions use named parameters. Parameters who's types end in **?** are
 optional.
 
-A parameter named _verbose_ is always optional and has a value 0 or 1
-(default=0). When _verbose_ is **1** commands are expected to output additional
+A parameter named _verbose_ is always optional and has a value **0** or **1**
+_(default=0)_. When _verbose_ is **1** commands are expected to output additional
 information to STDOUT. Although omitted, it is implied in the definitions
 below.
 
