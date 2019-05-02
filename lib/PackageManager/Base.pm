@@ -1,104 +1,65 @@
 use strict;
 use warnings;
 
-# ABSTRACT: A base class for the PackageManager::Virtual role.
+# ABSTRACT: PackageManager::Virtual compositions with input validation.
 
 =head1 SYNOPSIS
 
-    package Example::Base;
-    use Moose;
+    if ( $obj->does('PackageManager::Base') ) {
 
-    has 'example_apps' => ( is => 'rw' );
+        eval { $obj->install() };
+        print "$@\n" if ($@);    # Required option 'name' is not provided
 
-    sub query {
-        my $self    = shift;
-        my $verbose = shift;
-
-        if ( defined $verbose && $verbose == 1 ) {
-            print 'hi';
-        }
-        return @{ $self->example_apps };
+        eval { $obj->list( verbose => 'abc' ) };
+        print "$@\n" if ($@);    # Key 'verbose' (abc) is of invalid type...
     }
-
-    sub install { }
-
-    with 'PackageManager::Base';
 
 =head1 DESCRIPTION
 
-Handles boiler plate parameter validation; as well as, some output
-manipulation. 
+A moose role that extends L<PackageManager::Virtual>. It wraps all
+PackageManager::Virtual functions, validates the parameters and strips them of
+their names.
 
-=head2 SUBROUTINES
+=head2 FUNCTIONS
 
-All subroutine parameters are validated before invocation.
-
-=head3 QUERY
-
-The pattern filter is automatically applied the results. Implementing
-this subroutine now requires all installed packages to be returned.
-
-Returns all installed packages.
-
-    query(): Array
-
-Every index of the returned array is a hash with the same structure as
-the previous definition.
+All function parameters lose their name and the base function is invoked using
+a standard parameter array. The order of the parameters are the same as the
+order they appear in the original method definition. Except for I<verbose> 
+which has the default value B<0>, omitted optional parameters are undefined.
 
 =cut
 
 package PackageManager::Base;
+
 use 5.006;
-use Carp;
-use Params::Check qw(check);
+use Carp qw/confess/;
+use Params::Check qw/check/;
 use Moose::Role;
 
-my $VERBOSE = 0;
+around 'list' => sub {
+    my ( $orig, $self, %args ) = @_;
 
-around 'query' => sub {
-    my $orig = shift;
-    my $self = shift;
-    my %args = @_;
-
-    my ( $verbose, $pattern );
-    my $tmpl = {
+    my $verbose;
+    my $template = {
         verbose => {
-            default => $VERBOSE,
-            allow   => [ 0, 1 ]
-        },
-        pattern => {
-            defined => 1,
-            store   => \$pattern,
-            allow   => sub {
-                my $arg = $_[0];
-                eval { qr/$arg/ };
-                return $@ ? 0 : length($arg);
-            }
+            default => 0,
+            store   => \$verbose,
+            allow   => [ 0, 1 ],
         }
     };
+    check( $template, \%args )
+      or confess( Params::Check->last_error );
 
-    check( $tmpl, \%args, $verbose )
-      or croak( "Could not validate input: %1", Params::Check->last_error );
-
-    my @packages = $self->$orig($verbose);
-    if ( defined $pattern ) {
-        my $re = qr/$pattern/;
-        return grep { $_->{name} =~ $re } @packages;
-    }
-    else {
-        return @packages;
-    }
+    return $self->$orig($verbose);
 };
 
 around 'install' => sub {
-    my $orig = shift;
-    my $self = shift;
-    my %args = @_;
+    my ( $orig, $self, %args ) = @_;
 
     my ( $verbose, $name, $version );
-    my $tmpl = {
+    my $template = {
         verbose => {
-            default => $VERBOSE,
+            default => 0,
             store   => \$verbose,
             allow   => [ 0, 1 ]
         },
@@ -116,22 +77,19 @@ around 'install' => sub {
             }
         }
     };
+    check( $template, \%args )
+      or confess( Params::Check->last_error );
 
-    check( $tmpl, \%args, $verbose )
-      or croak( "Could not validate input: %1", Params::Check->last_error );
-
-    return $self->$orig( $verbose, $name, $version );
+    return $self->$orig( $name, $version, $verbose );
 };
 
 around 'remove' => sub {
-    my $orig = shift;
-    my $self = shift;
-    my %args = @_;
+    my ( $orig, $self, %args ) = @_;
 
     my ( $verbose, $name );
-    my $tmpl = {
+    my $template = {
         verbose => {
-            default => $VERBOSE,
+            default => 0,
             store   => \$verbose,
             allow   => [ 0, 1 ]
         },
@@ -143,11 +101,10 @@ around 'remove' => sub {
             }
         }
     };
+    check( $template, \%args )
+      or confess( Params::Check->last_error );
 
-    check( $tmpl, \%args, $verbose )
-      or croak( "Could not validate input: %1", Params::Check->last_error );
-
-    return $self->$orig( $verbose, $name );
+    return $self->$orig( $name, $verbose );
 };
 
 with 'PackageManager::Virtual';

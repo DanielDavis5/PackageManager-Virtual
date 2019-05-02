@@ -1,95 +1,79 @@
 # SYNOPSIS
 
-    # Instantiate an object that composes this package.
-    my $pkgMgr = My::PackageManager->new();
+    if ( $obj->does('PackageManager::Virtual') ) {
 
-    # Get all installed packages.
-    my @installed = $pkgMgr->list(); 
+        # Installs a package named 'cool_app'
+        $obj->install( name => 'cool_app' );
 
-    # Get an installed package's info.
-    my %app_1 = $pkgMgr->get( name => 'app1' );
-    print $app_1{name};    # prints the app name
-    print $app_1{version}; # prints the app version
+        # Removes a package named 'app1'. Output is verbose.
+        $obj->remove( verbose => 1, name => 'app1' );
 
-    # Unless the package is not installed.
-    my %app_2 = $pkgMgr->get( name => 'not_installed_app' );
-    unless( %app_2 ){ print 'not installed'; } # prints 'not installed'
-
-    # Install version '1.0' of an app named 'app3'.
-    $pkgMgr->install( name => 'app3', version => '1.0' );
-
-    # Remove an app named 'app4'.
-    $pkgMgr->remove( name => 'app4' );
+        # Prints all installed packages
+        print "\'$_->{name}\' has version \'$_->{version}\'\n"
+            foreach ( $obj->list() );
+    }
 
 # DESCRIPTION
 
-A moose role interface that exposes functionalities for software package
-management.
+A moose role that exposes functionalities for software package management.
 
-## DATA MODELS
+## METHODS
 
-### PACKAGE INFO
-
-A hash value that defines a package. It has the following
-key-value pairs:
-
-- **name**    => string
-
-    _The name of the package._
-
-- **version** => string
-
-    _A specific version of the package._
-
-### ERROR CODE
-
-An integer number value. The value zero implies no error.
-Otherwise, it indicates an error code.
-
-## SUBROUTINES
-
-All functions use named parameters. Parameters who's types end in "**?**" are
-optional.
-
-A parameter named _verbose_ is always optional and has a value "**0**" or "**1**"
-_(default=0)_. When _verbose_ is "**1**" commands are expected to output additional
-information to STDOUT. Although omitted, it is implied in the definitions
-below.
-
-### LIST
+### list( \[verbose => BOOLEAN\] )
 
 Gets all installed packages.
 
-    list(): Array
+The returned value is an array; every index is a hashref with the following
+key-value pairs:
 
-Every index of the return value is a ["PACKAGE INFO"](#package-info) reference.
+- **name**    => STRING
 
-### GET
+    _The name of the package._
 
-Gets a specified installed package.
+- **version** => STRING
 
-    get( name:string ): Hash
+    _A specific version of the package._
 
-The returned value is a ["PACKAGE INFO"](#package-info) that defines an installed package who's
-name equals _name_. If the package is not installed, the returned value is
-an empty list in list context or the undefined value in scalar context.
+#### verbose
 
-### INSTALL
+When this parameters value is "**1**" this command may output additional
+information to STDOUT.
+
+### install( name => STRING, \[version => STRING, verbose => BOOLEAN\] )
 
 Installs a specified package.
 
-    install( name:string, version:string? ): Scalar
+The returned value is an integer. The value "**0**" implies a successful
+installation. Otherwise, it indicates there was an error and the package was
+not installed.
 
-The returned value is an ["ERROR CODE"](#error-code); it describes the result of an attempt to
-install a package who's name equals _name_. When _version_ is included it
-is the version of the package to be installed. Otherwise, the latest package
-version will be installed.
+#### name
 
-### REMOVE
+The name of the package to be installed.
+
+#### version
+
+The version of the package to be installed. If omitted, the package version
+is automatically selected.
+
+#### verbose
+
+When this parameters value is "**1**" this command may output additional
+information to STDOUT.
+
+### remove( name => STRING, \[verbose => BOOLEAN\] )
 
 Removes a specified package.
 
-    remove( name:string ): Scalar
+The returned value is an integer. The value "**0**" implies a successful
+removal. Otherwise, it indicates there was an error and the removal process and
+the package was not removed.
 
-The returned value is an ["ERROR CODE"](#error-code); it describes the result of an attempt to
-remove a package who's name equals _name_.
+#### name
+
+The name of the package to be removed.
+
+#### verbose
+
+When this parameters value is "**1**" this command may output additional
+information to STDOUT.
