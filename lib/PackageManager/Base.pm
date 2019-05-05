@@ -8,7 +8,7 @@ use warnings;
     if ( $obj->does('PackageManager::Base') ) {
 
         eval { $obj->install() };
-        print "$@\n" if ($@);    # Required option 'name' is not provided
+        print "$@\n" if ($@);    # Required option 'name' is not provided...
 
         eval { $obj->list( verbose => 'abc' ) };
         print "$@\n" if ($@);    # Key 'verbose' (abc) is of invalid type...
