@@ -2,8 +2,8 @@ use strict;
 use warnings;
 
 package PackageManager::Virtual;
-
 use Moose::Role;
+
 
 # ABSTRACT: A moose role interface for package managers.
 
