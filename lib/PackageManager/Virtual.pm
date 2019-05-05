@@ -87,7 +87,7 @@ requires 'install';
 Removes a specified package.
 
 The returned value is an integer. The value "B<0>" implies a successful
-removal. Otherwise, it indicates there was an error and the removal process and
+removal. Otherwise, it indicates there was an error in the removal process and
 the package was not removed.
 
 =head4 name
