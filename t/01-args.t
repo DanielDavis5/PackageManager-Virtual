@@ -1,8 +1,6 @@
 #!perl -T
-use 5.006;
 use strict;
 use warnings;
-use Test::More;
 
 package TestObj;
 use Moose;
@@ -15,8 +13,6 @@ package Main;
 use Test::More;
 use Test::Exception;
 use TestObj;
-
-use Data::Dumper;
 
 sub check_no_exception {
     my $test = shift;
@@ -138,9 +134,9 @@ my @exception_expected = (
 
     # remove
     {
-        name   => 'remove: invalid verbose',
-          func => sub { $_[0]->remove( name => 'cool_app', verbose => 'abc' ) },
-          check => qr/Key 'verbose' \(abc\) is of invalid type/
+        name  => 'remove: invalid verbose',
+        func  => sub { $_[0]->remove( name => 'cool_app', verbose => 'abc' ) },
+        check => qr/Key 'verbose' \(abc\) is of invalid type/
     },
     {
         name  => 'remove: app missing',

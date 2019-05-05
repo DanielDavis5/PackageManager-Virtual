@@ -30,11 +30,10 @@ which has the default value B<0>, omitted optional parameters are undefined.
 =cut
 
 package PackageManager::Base;
-
-use 5.006;
 use Carp qw/confess/;
 use Params::Check qw/check/;
 use Moose::Role;
+
 
 around 'list' => sub {
     my ( $orig, $self, %args ) = @_;
