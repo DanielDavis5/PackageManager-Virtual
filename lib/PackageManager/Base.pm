@@ -34,7 +34,6 @@ use Carp qw/confess/;
 use Params::Check qw/check/;
 use Moose::Role;
 
-
 around 'list' => sub {
     my ( $orig, $self, %args ) = @_;
 
